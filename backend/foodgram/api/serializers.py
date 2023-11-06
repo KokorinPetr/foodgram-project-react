@@ -172,20 +172,30 @@ class RecipeEditSerializer(serializers.ModelSerializer):
 
     def validate_name(self, value):
         if len(value) < 4:
-            raise serializers.ValidationError('Название рецепта должно быть минимум 4 символа')
+            raise serializers.ValidationError(
+                'Название рецепта должно быть минимум 4 символа'
+            )
         return value
 
     def validate_ingredients(self, value):
         if not value:
-            raise serializers.ValidationError('Ингредиенты не должны быть пустыми')
+            raise serializers.ValidationError(
+                'Ингредиенты не должны быть пустыми'
+            )
         ids = [item['id'] for item in value]
         if len(ids) != len(set(ids)):
-            raise serializers.ValidationError('Ингредиенты не должны повторяться!')
+            raise serializers.ValidationError(
+                'Ингредиенты не должны повторяться!'
+            )
         for ingredient in value:
             if not Ingredient.objects.filter(id=ingredient['id']).exists():
-                raise serializers.ValidationError(f'Ингредиента с id - {ingredient["id"]} нет')
+                raise serializers.ValidationError(
+                    f'Ингредиента с id - {ingredient["id"]} нет'
+                )
             if ingredient['amount'] < 1:
-                raise serializers.ValidationError('Минимальное количество ингредиента 1')
+                raise serializers.ValidationError(
+                    'Минимальное количество ингредиента 1'
+                )
         return value
 
     def validate_tags(self, value):
@@ -195,7 +205,9 @@ class RecipeEditSerializer(serializers.ModelSerializer):
 
     def validate_cooking_time(self, value):
         if value > 300 or value < 1:
-            raise serializers.ValidationError('Время приготовления блюда должно быть от 1 до 300 минут')
+            raise serializers.ValidationError(
+                'Время приготовления блюда должно быть от 1 до 300 минут'
+            )
         return value
 
     def create_ingredients(self, ingredients, recipe):
@@ -271,7 +283,9 @@ class SetPasswordSerializer(PasswordSerializer):
         if data['new_password'] == data['current_password']:
             raise serializers.ValidationError({
                 "new_password": "Пароли не должны совпадать"})
-        check_current = check_password(data['current_password'], user.password)
+        check_current = check_password(
+            data['current_password'], user.password
+        )
         if check_current is False:
             raise serializers.ValidationError({
                 "current_password": "Введен неверный пароль"})
