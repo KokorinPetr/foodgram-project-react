@@ -118,7 +118,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
             ingredient_data = {
                 'id': recipe_ingredient.ingredient.id,
                 'name': recipe_ingredient.ingredient.name,
-                'measurement_unit': 
+                'measurement_unit':
                     recipe_ingredient.ingredient.measurement_unit,
                 'amount': recipe_ingredient.amount,
             }
@@ -137,7 +137,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
         return (
             self.context['request'].user.is_authenticated
             and ShoppingCart.objects.filter(
-            user=self.context['request'].user, recipe=obj
+                user=self.context['request'].user, recipe=obj
             ).exists()
         )
 

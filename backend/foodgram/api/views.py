@@ -102,8 +102,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
         for recipe_name, ingredients in ingredient_dict.items():
             text += f"Название рецепта: {recipe_name}\n"
             for ingredient in ingredients:
-                text += f"    {ingredient['name']}, {ingredient['amount']} {ingredient['measurement_unit']}"
-                text += "\n"
+                text += (
+                    f"    {ingredient['name']}, "
+                    f"{ingredient['amount']} "
+                    f"{ingredient['measurement_unit']},\n"
+                )
+
 
         filename = f"{user.username}_shopping_list.txt"
         response = HttpResponse(
