@@ -118,7 +118,8 @@ class RecipeReadSerializer(serializers.ModelSerializer):
             ingredient_data = {
                 'id': recipe_ingredient.ingredient.id,
                 'name': recipe_ingredient.ingredient.name,
-                'measurement_unit': recipe_ingredient.ingredient.measurement_unit,
+                'measurement_unit': 
+                    recipe_ingredient.ingredient.measurement_unit,
                 'amount': recipe_ingredient.amount,
             }
             ingredients_data.append(ingredient_data)
@@ -135,7 +136,9 @@ class RecipeReadSerializer(serializers.ModelSerializer):
     def get_is_in_shopping_cart(self, obj):
         return (
             self.context['request'].user.is_authenticated
-            and ShoppingCart.objects.filter(user=self.context['request'].user, recipe=obj).exists()
+            and ShoppingCart.objects.filter(
+            user=self.context['request'].user, recipe=obj
+            ).exists()
         )
 
 
@@ -261,26 +264,6 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({
                 'errors': 'Рецепт уже добавлен в список покупок'})
         return data
-
-
-class FavoriteRecipeSerializer(serializers.ModelSerializer):
-    id = serializers.ReadOnlyField(
-        source='favorite_recipe.id',
-    )
-    name = serializers.ReadOnlyField(
-        source='favorite_recipe.name',
-    )
-    image = serializers.CharField(
-        source='favorite_recipe.image',
-        read_only=True,
-    )
-    cooking_time = serializers.ReadOnlyField(
-        source='favorite_recipe.cooking_time',
-    )
-
-    class Meta:
-        model = FavoriteRecipe
-        fields = ('id', 'name', 'image', 'cooking_time')
 
 
 class SetPasswordSerializer(PasswordSerializer):

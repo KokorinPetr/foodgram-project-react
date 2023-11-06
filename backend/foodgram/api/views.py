@@ -24,10 +24,10 @@ from rest_framework.permissions import (
 )
 
 from recipes.models import (
-    Tag, Ingredient, Recipe, FavoriteRecipe, ShoppingCart
+    Tag, Ingredient, Recipe, FavoriteRecipe, ShoppingCart,
+    Subscribe
 )
 
-from recipes.models import ShoppingCart, Subscribe
 from .mixins import GetOrDeleteViewSet
 from .serializers import (
     TagSerializer, RecipeReadSerializer,
@@ -94,14 +94,16 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 ingredient_info = {
                     'name': recipe_ingredient.ingredient.name,
                     'amount': recipe_ingredient.amount,
-                    'measurement_unit': recipe_ingredient.ingredient.measurement_unit
+                    'measurement_unit':
+                        recipe_ingredient.ingredient.measurement_unit
                 }
                 ingredient_dict[recipe.name].append(ingredient_info)
         text = ""
         for recipe_name, ingredients in ingredient_dict.items():
             text += f"Название рецепта: {recipe_name}\n"
             for ingredient in ingredients:
-                text += f"    {ingredient['name']}, {ingredient['amount']} {ingredient['measurement_unit']}\n"
+                text += f"    {ingredient['name']}, {ingredient['amount']} {ingredient['measurement_unit']}"
+                text += "\n"
 
         filename = f"{user.username}_shopping_list.txt"
         response = HttpResponse(
