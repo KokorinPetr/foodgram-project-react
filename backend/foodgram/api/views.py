@@ -108,7 +108,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
                     f"{ingredient['measurement_unit']},\n"
                 )
 
-
         filename = f"{user.username}_shopping_list.txt"
         response = HttpResponse(
             text, content_type="text/plain; charset=utf-8"
