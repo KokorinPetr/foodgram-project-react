@@ -1,7 +1,7 @@
 from rest_framework import mixins, viewsets
 
 
-class GetOrDeleteViewSet(
+class CreateOrDestroyViewSet(
     mixins.CreateModelMixin,
     mixins.DestroyModelMixin,
     viewsets.GenericViewSet
@@ -9,7 +9,7 @@ class GetOrDeleteViewSet(
     pass
 
 
-class GetPostDeleteViewSet(
+class ListCreateDestroyViewSet(
     mixins.CreateModelMixin,
     mixins.ListModelMixin,
     mixins.DestroyModelMixin,

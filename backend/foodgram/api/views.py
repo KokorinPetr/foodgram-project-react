@@ -25,10 +25,10 @@ from rest_framework.permissions import (
 
 from recipes.models import (
     Tag, Ingredient, Recipe, FavoriteRecipe, ShoppingCart,
-    Subscribe
+    Subscription
 )
 
-from .mixins import GetOrDeleteViewSet
+from .mixins import CreateOrDestroyViewSet
 from .serializers import (
     TagSerializer, RecipeReadSerializer,
     RecipeEditSerializer, IngredientsReadSerializer,
@@ -129,7 +129,7 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     filterset_class = IngredientsFilter
 
 
-class CustomUserViewSet(UserViewSet):
+class UserViewSet(UserViewSet):
     queryset = User.objects.all()
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
@@ -150,7 +150,7 @@ class CustomUserViewSet(UserViewSet):
     )
     def subscriptions(self, request):
         user = request.user
-        queryset = Subscribe.objects.filter(user=user)
+        queryset = Subscription.objects.filter(user=user)
         pages = self.paginate_queryset(queryset)
         serializer = SubscribeSerializer(
             pages, many=True,
@@ -158,7 +158,7 @@ class CustomUserViewSet(UserViewSet):
         return self.get_paginated_response(serializer.data)
 
 
-class FavoriteRecipeViewSet(GetOrDeleteViewSet):
+class FavoriteRecipeViewSet(CreateOrDestroyViewSet):
     serializer_class = FavoriteRecipeSerializer
 
     def get_queryset(self):
@@ -194,7 +194,7 @@ class FavoriteRecipeViewSet(GetOrDeleteViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ShoppingCartViewSet(GetOrDeleteViewSet):
+class ShoppingCartViewSet(CreateOrDestroyViewSet):
     serializer_class = ShoppingCartSerializer
 
     def get_queryset(self):
@@ -230,7 +230,7 @@ class ShoppingCartViewSet(GetOrDeleteViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class SubscribeViewSet(GetOrDeleteViewSet):
+class SubscribeViewSet(CreateOrDestroyViewSet):
     serializer_class = SubscribeSerializer
 
     def get_queryset(self):
@@ -251,14 +251,14 @@ class SubscribeViewSet(GetOrDeleteViewSet):
         )
 
     @action(methods=('delete',), detail=True)
-    def delete(self, request, user_id):
+    def unsubscribe(self, request, user_id):
         get_object_or_404(User, id=user_id)
-        if not Subscribe.objects.filter(
+        if not Subscription.objects.filter(
                 user=request.user, author_id=user_id).exists():
             return Response({'errors': 'Вы не были подписаны на автора'},
                             status=status.HTTP_400_BAD_REQUEST)
         get_object_or_404(
-            Subscribe,
+            Subscription,
             user=request.user,
             author_id=user_id
         ).delete()

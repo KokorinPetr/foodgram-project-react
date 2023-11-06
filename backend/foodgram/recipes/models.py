@@ -7,22 +7,35 @@ User = get_user_model()
 
 
 class Ingredient(models.Model):
-    name = models.CharField(max_length=100)
-    amount = models.PositiveIntegerField()
-    measurement_unit = models.CharField(max_length=20)
+    name = models.CharField(max_length=100, verbose_name='Название')
+    amount = models.PositiveIntegerField(verbose_name='Количество')
+    measurement_unit = models.CharField(
+        max_length=20, verbose_name='Единица измерения'
+    )
+
+    class Meta:
+        verbose_name = 'Ингредиент'
+        verbose_name_plural = 'Ингредиенты'
+        ordering = ['name']
 
     def __str__(self):
         return self.name
 
 
 class Tag(models.Model):
-    name = models.CharField(max_length=30, unique=True)
+    name = models.CharField(
+        max_length=30, unique=True, verbose_name='Название'
+    )
     color = models.CharField(
         max_length=7,
         validators=[RegexValidator(r'^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$')],
-        help_text='Цветовой HEX-код в формате #RRGGBB'
+        help_text='Цветовой HEX-код в формате #RRGGBB',
+        verbose_name='Цвет'
     )
     slug = models.SlugField(max_length=30, unique=True, allow_unicode=True)
+
+    class Meta:
+        ordering = ['name']
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -74,25 +87,37 @@ class RecipeIngredient(models.Model):
     )
     amount = models.PositiveIntegerField(default=1)
 
+    class Meta:
+        unique_together = ('recipe', 'ingredient')
 
-class Subscribe(models.Model):
+
+class Subscription(models.Model):
     user = models.ForeignKey(
         User,
         related_name='follower',
+        verbose_name='Подписчик',
         on_delete=models.CASCADE
     )
     author = models.ForeignKey(
         User,
         related_name='author',
+        verbose_name='Автор',
         on_delete=models.CASCADE
     )
 
-    constraints = [
-        models.UniqueConstraint(
-            fields=('user', 'author'),
-            name='unique_subscription'
-        )
-    ]
+    class Meta:
+        verbose_name = ('Подписка')
+        verbose_name_plural = ('Подписки')
+        ordering = ('user', 'author')
+        constraints = [
+            models.UniqueConstraint(
+                fields=('user', 'author'),
+                name='unique_subscription'
+            )
+        ]
+
+    def __str__(self):
+        return f'{self.user} подписан на {self.author}'
 
 
 class FavoriteRecipe(models.Model):
