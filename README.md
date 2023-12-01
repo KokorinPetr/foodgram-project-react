@@ -9,10 +9,6 @@ Explore recipes from other users and get inspired.
 Easily download a shopping list for your recipes before heading to the store.
 Connect with fellow food enthusiasts and exchange culinary ideas and experiences.
 
-## Project Links
-
-- [Live Demo](https://yafoodgram16.ddns.net) - Check out the live version of Foodgram.
-
 ## Installation
 
 To set up Foodgram locally, follow these steps:
